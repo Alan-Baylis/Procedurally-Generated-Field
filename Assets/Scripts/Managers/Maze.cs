@@ -22,7 +22,7 @@ public class Maze : MonoBehaviour {
     public IEnumerator Generate() {
         cells = new MazeCell[fieldDimension.x, fieldDimension.z];
         IntVector2 coordinates = GetRandomCoordinates;
-        while (DoesContainCoordinates(coordinates)) {
+        while (DoesContainCoordinates(coordinates) && !DoesCellExist(coordinates)) {
             yield return new WaitForSeconds(delayTime);
             CreateCell(coordinates);
             coordinates.z += 1;
@@ -35,6 +35,18 @@ public class Maze : MonoBehaviour {
     /// <returns>True if coordinates are in bound, false if not.</returns>
     public bool DoesContainCoordinates(IntVector2 coordinates) {
         return coordinates.x >= 0 && coordinates.x < fieldDimension.x && coordinates.z >= 0 && coordinates.z < fieldDimension.z; 
+    }
+    
+    /// <summary>
+    /// Checks if a cell exist in the coordinate space.
+    /// </summary>
+    /// <param name="coordinates">Set of coordinates</param>
+    /// <returns>True if the cell exists</returns>
+    public bool DoesCellExist(IntVector2 coordinates) {
+        if (cells[coordinates.x, coordinates.z] != null) {
+            return true;
+        }
+        return false;
     }
     #endregion
     
