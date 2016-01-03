@@ -8,26 +8,33 @@ public class Maze : MonoBehaviour {
     public float delayTime = 0.01f;
     private MazeCell[,] cells;
     
+    /// <summary>
+    /// Returns a struct of two random coordinates.
+    /// </summary>
+    public IntVector2 GetRandomCoordinates {
+        get { return new IntVector2(Random.Range(0, fieldDimension.x), Random.Range(0, fieldDimension.z)); }
+    }
+    
     #region Public Methods
     /// <summary>
     /// Coroutine generates the field progressively.
     /// <summary>
     public IEnumerator Generate() {
         cells = new MazeCell[fieldDimension.x, fieldDimension.z];
-        for (int i = 0; i < fieldDimension.x; i++) {
-            for (int j = 0; j < fieldDimension.z; j++) {
-                yield return new WaitForSeconds(delayTime);
-                CreateCell(new IntVector2(i, j));
-            }
+        IntVector2 coordinates = GetRandomCoordinates;
+        while (DoesContainCoordinates(coordinates)) {
+            yield return new WaitForSeconds(delayTime);
+            CreateCell(coordinates);
+            coordinates.z += 1;
         }
     }
     
     /// <summary>
-    /// Returns a struct of two random coordinates.
+    /// Checks if a pair of coordinates are in bound.
     /// </summary>
-    /// <returns>IntVector2 struct with 2 random coordinates</returns>
-    public IntVector2 GetRandomCoordinates() {
-        return new IntVector2(Random.Range(0, fieldDimension.x), Random.Range(0, fieldDimension.z));
+    /// <returns>True if coordinates are in bound, false if not.</returns>
+    public bool DoesContainCoordinates(IntVector2 coordinates) {
+        return coordinates.x >= 0 && coordinates.x < fieldDimension.x && coordinates.z >= 0 && coordinates.z < fieldDimension.z; 
     }
     #endregion
     
