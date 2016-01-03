@@ -24,10 +24,10 @@ public class Maze : MonoBehaviour {
         List<MazeCell> activeCells = new List<MazeCell>(); // Keeps an active list of cells
         cells = new MazeCell[fieldDimension.x, fieldDimension.z];
         IntVector2 coordinates = GetRandomCoordinates;
+        FirstGenerationStep(activeCells); // Perform the first step of the generation
         while (DoesContainCoordinates(coordinates) && !DoesCellExist(coordinates)) {
             yield return new WaitForSeconds(delayTime);
-            CreateCell(coordinates);
-            coordinates += MazeDirections.getRandomValue.IntToVector2();
+            NextGenerationStep(activeCells); // Do the next generation steps
         }
     }
     
@@ -35,8 +35,8 @@ public class Maze : MonoBehaviour {
     /// Checks if a pair of coordinates are in bound.
     /// </summary>
     /// <returns>True if coordinates are in bound, false if not.</returns>
-    public bool DoesContainCoordinates(IntVector2 coordinates) {
-        return coordinates.x >= 0 && coordinates.x < fieldDimension.x && coordinates.z >= 0 && coordinates.z < fieldDimension.z; 
+    public bool DoesContainCoordinates(IntVector2 coordinate) {
+        return coordinate.x >= 0 && coordinate.x < fieldDimension.x && coordinate.z >= 0 && coordinate.z < fieldDimension.z; 
     }
     
     /// <summary>
@@ -53,9 +53,9 @@ public class Maze : MonoBehaviour {
     #endregion
     
     private MazeCell CreateCell(IntVector2 coordinates) {
-        // Create a cell object and snap it to some position
-        MazeCell newCell = Instantiate(cell) as MazeCell;
+        MazeCell newCell = Instantiate(cell) as MazeCell;         // Create a cell object and snap it to some position
         cells[coordinates.x, coordinates.z] = newCell;
+        newCell.coordinates = coordinates;
         newCell.name = "Maze Cell: " + coordinates.x + " " + coordinates.z;
         newCell.transform.parent = transform;
         newCell.transform.localPosition = new Vector3(coordinates.x - fieldDimension.x * 0.5f + 0.5f, 0f, coordinates.z - fieldDimension.z * 0.5f + 0.5f);
@@ -63,7 +63,20 @@ public class Maze : MonoBehaviour {
     }
     
     private void FirstGenerationStep(List<MazeCell> activeCells) {
-        // Creates the first cell in the Maze and adds it to an active list
-        activeCells.Add(CreateCell(GetRandomCoordinates));
+        activeCells.Add(CreateCell(GetRandomCoordinates)); // Creates the first cell in the Maze and adds it to an active list
+    }
+    
+    private void NextGenerationStep (List<MazeCell> activeCells) {
+        int index = activeCells.Count - 1; // Set the index at the end of the list
+        Debug.Log(index);
+        MazeCell currentCell = activeCells[index];
+        MazeDirection direction = MazeDirections.getRandomValue;
+        IntVector2 coordinates = currentCell.coordinates + direction.IntToVector2();
+        if (DoesContainCoordinates(coordinates) && !DoesCellExist(coordinates)) {
+            activeCells.Add(CreateCell(coordinates));
+        }
+        else {
+            activeCells.RemoveAt(index);
+        }
     }
 }
