@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Maze : MonoBehaviour {
     
@@ -20,12 +21,13 @@ public class Maze : MonoBehaviour {
     /// Coroutine generates the field progressively.
     /// <summary>
     public IEnumerator Generate() {
+        List<MazeCell> activeCells = new List<MazeCell>(); // Keeps an active list of cells
         cells = new MazeCell[fieldDimension.x, fieldDimension.z];
         IntVector2 coordinates = GetRandomCoordinates;
         while (DoesContainCoordinates(coordinates) && !DoesCellExist(coordinates)) {
             yield return new WaitForSeconds(delayTime);
             CreateCell(coordinates);
-            coordinates.z += 1;
+            coordinates += MazeDirections.getRandomValue.IntToVector2();
         }
     }
     
@@ -50,12 +52,18 @@ public class Maze : MonoBehaviour {
     }
     #endregion
     
-    private void CreateCell(IntVector2 coordinates) {
+    private MazeCell CreateCell(IntVector2 coordinates) {
         // Create a cell object and snap it to some position
         MazeCell newCell = Instantiate(cell) as MazeCell;
         cells[coordinates.x, coordinates.z] = newCell;
         newCell.name = "Maze Cell: " + coordinates.x + " " + coordinates.z;
         newCell.transform.parent = transform;
         newCell.transform.localPosition = new Vector3(coordinates.x - fieldDimension.x * 0.5f + 0.5f, 0f, coordinates.z - fieldDimension.z * 0.5f + 0.5f);
-    }    
+        return newCell;
+    }
+    
+    private void FirstGenerationStep(List<MazeCell> activeCells) {
+        // Creates the first cell in the Maze and adds it to an active list
+        activeCells.Add(CreateCell(GetRandomCoordinates));
+    }
 }
