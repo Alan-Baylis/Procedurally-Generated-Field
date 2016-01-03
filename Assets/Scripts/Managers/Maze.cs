@@ -5,22 +5,14 @@ public class Maze : MonoBehaviour {
     
     public int sizeX, sizeZ;
     public MazeCell cell;
+    public float delayTime = 0.01f;
     private MazeCell[,] cells;
     
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	   
-	}
-    
-    public void Generate() {
+    public IEnumerator Generate() {
         cells = new MazeCell[sizeX, sizeZ];
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeZ; j++) {
+                yield return new WaitForSeconds(delayTime);
                 CreateCell(i, j);
             }
         }
