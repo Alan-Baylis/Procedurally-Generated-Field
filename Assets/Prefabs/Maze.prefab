@@ -39,16 +39,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25e9f46c28135f64bbfc89bccd46456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sizeX: 20
-  sizeZ: 20
+  fieldDimension:
+    x: 20
+    z: 20
   cell: {fileID: 11490470, guid: c30ebdc9acd269b428d35b786ca23511, type: 2}
+  delayTime: 0.01
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: fieldDimension.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: fieldDimension.z
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 120414}
